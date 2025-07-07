@@ -1,22 +1,29 @@
-// helper: الحصول على المستخدمين من localStorage
+// جلب المستخدمين من localStorage
 function getUsers() {
   return JSON.parse(localStorage.getItem('users') || '[]');
 }
 
-// helper: حفظ مستخدم جديد
+// حفظ مستخدم جديد
 function saveUser(u) {
   const users = getUsers();
   users.push(u);
   localStorage.setItem('users', JSON.stringify(users));
 }
 
-// helper: البحث عن مستخدم
+// البحث عن مستخدم
 function findUser(email, pwd) {
   return getUsers().find(u => u.email === email && u.pwd === pwd);
 }
 
-// تسجيل جديد
-if (window.location.pathname.endsWith('register.html')) {
+// إعادة توجيه من index إذا كان المستخدم مسجل مسبقًا
+if (location.pathname.endsWith('index.html') || location.pathname === '/') {
+  if (localStorage.getItem('asnan360-user')) {
+    window.location = 'dashboard.html';
+  }
+}
+
+// منطق إنشاء الحساب
+if (location.pathname.endsWith('register.html')) {
   document.getElementById('registerForm').onsubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -31,8 +38,8 @@ if (window.location.pathname.endsWith('register.html')) {
   };
 }
 
-// تسجيل دخول
-if (window.location.pathname.endsWith('login.html')) {
+// منطق تسجيل الدخول
+if (location.pathname.endsWith('login.html')) {
   document.getElementById('loginForm').onsubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -41,15 +48,16 @@ if (window.location.pathname.endsWith('login.html')) {
       localStorage.setItem('asnan360-user', email);
       window.location = 'dashboard.html';
     } else {
-      alert('❌ بيانات خاطئة');
+      alert('❌ البريد أو كلمة المرور خاطئة');
     }
   };
 }
 
-// حماية صفحة dashboard
-if (window.location.pathname.endsWith('dashboard.html')) {
+// حماية لوحة التحكم وتسجيل الخروج
+if (location.pathname.endsWith('dashboard.html')) {
   const user = localStorage.getItem('asnan360-user');
   if (!user) window.location = 'login.html';
+
   document.getElementById('logoutBtn').onclick = () => {
     localStorage.removeItem('asnan360-user');
     window.location = 'login.html';

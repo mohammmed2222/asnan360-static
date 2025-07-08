@@ -1,4 +1,3 @@
-// assets/js/db.js
 let db;
 function initDB(cb) {
   const req = indexedDB.open("Asnan360DB", 1);
@@ -12,22 +11,42 @@ function initDB(cb) {
     db = e.target.result;
     cb && cb();
   };
-  req.onerror = e => console.error("DB failed", e);
+  req.onerror = e => console.error("DB init error", e);
 }
-function getAllQuestions(cb) {
+
+function addQuestion(rec, cb) {
+  const tx = db.transaction("questions", "readwrite");
+  tx.objectStore("questions").add(rec);
+  tx.oncomplete = () => cb && cb();
+}
+
+function getQuestionsByCourse(courseId, cb) {
   const list = [];
-  const store = db.transaction("questions","readonly").objectStore("questions");
+  const store = db.transaction("questions", "readonly").objectStore("questions");
   store.openCursor().onsuccess = e => {
     const cur = e.target.result;
-    if (cur) { list.push(cur.value); cur.continue(); }
-    else cb(list);
+    if (!cur) return cb(list);
+    if (cur.value.courseId === courseId) list.push(cur.value);
+    cur.continue();
   };
 }
+
+function getAllQuestions(cb) {
+  const list = [];
+  const store = db.transaction("questions", "readonly").objectStore("questions");
+  store.openCursor().onsuccess = e => {
+    const cur = e.target.result;
+    if (!cur) return cb(list);
+    list.push(cur.value);
+    cur.continue();
+  };
+}
+
 function answerQuestion(qid, answer, cb) {
-  const tx = db.transaction("questions","readwrite");
+  const tx = db.transaction("questions", "readwrite");
   const store = tx.objectStore("questions");
-  store.get(qid).onsuccess = ev => {
-    const rec = ev.target.result;
+  store.get(qid).onsuccess = e => {
+    const rec = e.target.result;
     rec.answer = answer;
     store.put(rec);
     tx.oncomplete = () => cb && cb();

@@ -1,59 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>لوحة المدرّس – أسنان360</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 text-gray-800">
-
-  <div class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-
-      <h2 id="teacherWelcome"
-          class="text-3xl font-bold text-indigo-600 text-center mb-6">
-        تحميل...
-      </h2>
-
-      <!-- إدارة الدورات -->
-      <section class="mb-8">
-        <h3 class="text-xl font-semibold mb-4">📚 إدارة الدورات</h3>
-
-        <div class="flex mb-4 space-x-2 rtl:space-x-reverse">
-          <input type="text" id="newCourseName"
-                 placeholder="اسم الدورة الجديدة"
-                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button id="addCourseBtn"
-                  class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition">
-            إضافة دورة
-          </button>
-        </div>
-
-        <ul id="courseList" class="space-y-4">
-          <!-- تُضاف الدورات وديناميكيًا -->
-        </ul>
-      </section>
-
-      <!-- الأسئلة من الطلاب -->
-      <section class="mb-8">
-        <h3 class="text-xl font-semibold mb-2">💬 الأسئلة الواردة</h3>
-        <ul id="questionList" class="space-y-3">
-          <!-- تُضاف الأسئلة كما كانت -->
-        </ul>
-      </section>
-
-      <!-- تسجيل خروج -->
-      <div class="text-center">
-        <button id="logoutTeacherBtn"
-                class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-          تسجيل الخروج
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <script src="assets/js/teacher.js"></script>
-</body>
-</html>

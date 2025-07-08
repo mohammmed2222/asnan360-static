@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             حذف
           </button>`;
         courseList.appendChild(li);
+
         li.querySelector('.delete-btn').addEventListener('click', () => {
           if (!confirm('هل تريد حذف هذه الدورة؟')) return;
           courses = courses.filter(c => c.id !== course.id);

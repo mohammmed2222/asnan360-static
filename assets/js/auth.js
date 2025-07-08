@@ -1,65 +1,72 @@
-// جلب المستخدمين من localStorage
-function getUsers() {
-  return JSON.parse(localStorage.getItem('users') || '[]');
-}
+// assets/js/auth.js
 
-// حفظ مستخدم جديد
-function saveUser(u) {
-  const users = getUsers();
-  users.push(u);
-  localStorage.setItem('users', JSON.stringify(users));
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const registerForm = document.getElementById('registerForm');
+  const loginForm    = document.getElementById('loginForm');
 
-// البحث عن مستخدم
-function findUser(email, pwd) {
-  return getUsers().find(u => u.email === email && u.pwd === pwd);
-}
+  // حفظ الحساب عند التسجيل
+  if (registerForm) {
+    registerForm.addEventListener('submit', e => {
+      e.preventDefault();
 
-// إعادة توجيه من index إذا كان المستخدم مسجل مسبقًا
-if (location.pathname.endsWith('index.html') || location.pathname === '/') {
-  if (localStorage.getItem('asnan360-user')) {
-    window.location = 'dashboard.html';
+      const name     = registerForm.fullname.value;
+      const email    = registerForm.email.value;
+      const password = registerForm.password.value;
+      const role     = registerForm.role.value;
+
+      // حفظ البيانات مع الدور في localStorage
+      const user = { name, email, password, role };
+      localStorage.setItem('asnan360_user', JSON.stringify(user));
+
+      alert('✅ تم إنشاء الحساب بنجاح!');
+      window.location.href = 'login.html';
+    });
   }
-}
 
-// منطق إنشاء الحساب
-if (location.pathname.endsWith('register.html')) {
-  document.getElementById('registerForm').onsubmit = e => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const pwd   = e.target.password.value;
-    if (findUser(email, pwd)) {
-      alert('❌ البريد مسجل مسبقًا');
+  // التحقق وتوجيه حسب الدور عند تسجيل الدخول
+  if (loginForm) {
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const email    = loginForm.email.value;
+      const password = loginForm.password.value;
+      const saved    = JSON.parse(localStorage.getItem('asnan360_user'));
+
+      if (saved && saved.email === email && saved.password === password) {
+        alert('🎉 مرحباً بعودتك، ' + saved.name);
+
+        // توجيه المدرّس إلى صفحة المدرّس والطالب إلى صفحة الطالب
+        if (saved.role === 'teacher') {
+          window.location.href = 'teacher.html';
+        } else {
+          window.location.href = 'student.html';
+        }
+      } else {
+        alert('❌ معلومات الدخول غير صحيحة');
+      }
+    });
+  }
+});
+
+
+// عرض اسم المستخدم في لوحة التحكم (dashboard)
+document.addEventListener('DOMContentLoaded', () => {
+  const welcome   = document.getElementById('welcomeMessage');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  if (welcome && logoutBtn) {
+    const user = JSON.parse(localStorage.getItem('asnan360_user'));
+
+    if (user) {
+      welcome.textContent = `مرحباً ${user.name}، نحن سعداء بعودتك!`;
     } else {
-      saveUser({ email, pwd });
-      alert('✅ تم التسجيل بنجاح');
-      window.location = 'login.html';
+      window.location.href = 'login.html';
     }
-  };
-}
 
-// منطق تسجيل الدخول
-if (location.pathname.endsWith('login.html')) {
-  document.getElementById('loginForm').onsubmit = e => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const pwd   = e.target.password.value;
-    if (findUser(email, pwd)) {
-      localStorage.setItem('asnan360-user', email);
-      window.location = 'dashboard.html';
-    } else {
-      alert('❌ البريد أو كلمة المرور خاطئة');
-    }
-  };
-}
-
-// حماية لوحة التحكم وتسجيل الخروج
-if (location.pathname.endsWith('dashboard.html')) {
-  const user = localStorage.getItem('asnan360-user');
-  if (!user) window.location = 'login.html';
-
-  document.getElementById('logoutBtn').onclick = () => {
-    localStorage.removeItem('asnan360-user');
-    window.location = 'login.html';
-  };
-}
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('asnan360_user');
+      alert('👋 تم تسجيل الخروج بنجاح');
+      window.location.href = 'login.html';
+    });
+  }
+});
